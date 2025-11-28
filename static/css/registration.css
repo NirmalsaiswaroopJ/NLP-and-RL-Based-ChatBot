@@ -83,12 +83,16 @@ body {
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(0, 0) scale(1);
     }
+
     33% {
         transform: translate(30px, -50px) scale(1.1);
     }
+
     66% {
         transform: translate(-20px, 30px) scale(0.9);
     }
@@ -236,7 +240,6 @@ body {
     font-size: 1rem;
 }
 
-/* Input Groups */
 .input-group {
     margin-bottom: 1.5rem;
 }
@@ -253,6 +256,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    z-index: 999;
 }
 
 .input-icon {
@@ -261,6 +265,7 @@ body {
     color: var(--text-light);
     font-size: 1.25rem;
     pointer-events: none;
+    z-index: 9999;
 }
 
 .input-group input {
@@ -276,20 +281,24 @@ body {
 
 .input-group input::placeholder {
     color: var(--text-light);
+
 }
 
 .input-group input:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+
 }
 
 .input-group.error input {
     border-color: var(--error-color);
+
 }
 
 .input-group.error input:focus {
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+
 }
 
 .error-message {
@@ -515,6 +524,7 @@ body {
         opacity: 0;
         transform: translateX(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -526,6 +536,7 @@ body {
         opacity: 0;
         transform: translateX(30px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -536,18 +547,23 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
 }
 
 @keyframes shake {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateX(0);
     }
+
     25% {
         transform: translateX(-10px);
     }
+
     75% {
         transform: translateX(10px);
     }
