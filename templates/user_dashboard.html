@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MediBot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
+</head>
+<body>
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <span class="material-symbols-outlined">health_and_safety</span>
+                </div>
+                <div class="logo-text">MediBot</div>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">{{ username[0].upper() }}</div>
+                <div class="user-info">
+                    <h4>{{ username }}</h4>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-label">Main Menu</div>
+                <a href="/dashboard" class="menu-item active">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <div class="menu-item" onclick="openChatbot()">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span>AI Chatbot</span>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-label">Services</div>
+                <div class="menu-item" onclick="openModal('hospitalModal')">
+                    <span class="material-symbols-outlined">local_hospital</span>
+                    <span>Find Hospitals</span>
+                </div>
+                <div class="menu-item" onclick="openModal('medicineModal')">
+                    <span class="material-symbols-outlined">medication</span>
+                    <span>Medicine Info</span>
+                </div>
+                <div class="menu-item" onclick="openModal('appointmentModal')">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span>Appointments</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/dashboard/health-tracker'">
+                    <span class="material-symbols-outlined">monitor_heart</span>
+                    <span>Track Your Health</span>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-label">Account</div>
+                <div class="menu-item" onclick="openModal('historyModal')">
+                    <span class="material-symbols-outlined">history</span>
+                    <span>Chat History</span>
+                </div>
+                <div class="menu-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="logout-section">
+            <a href="{{ url_for('auth_bp.user_logout') }}" class="logout-btn">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>Welcome back, {{ username }}! 👋</h1>
+                    <p>Here's your health dashboard overview</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" title="Notifications">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button class="btn-icon" title="Settings">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">
+                        <span class="material-symbols-outlined">verified</span>
+                    </div>
+                    <div class="stat-trend">Active</div>
+                </div>
+                <div class="stat-content">
+                    <h3>Account Status</h3>
+                    <div class="stat-value" style="font-size: 1.5rem;">Premium</div>
+                    <div class="stat-subtitle">Unlimited access</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange">
+                        <span class="material-symbols-outlined">schedule</span>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3>Last Active</h3>
+                    <div class="stat-value" style="font-size: 1.5rem;">
+                        {{ last_active }}
+                    </div>
+                    <div class="stat-subtitle">Recent activity</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2 class="section-title">
+                <span class="material-symbols-outlined">bolt</span>
+                Quick Actions
+            </h2>
+            <div class="actions-grid">
+                <div class="action-card" onclick="openChatbot()">
+                    <div class="action-icon">
+                        <span class="material-symbols-outlined">psychology</span>
+                    </div>
+                    <h3>AI Health Assistant</h3>
+                    <p>Get instant medical guidance and symptom analysis from our advanced AI chatbot</p>
+                    <div class="action-btn">
+                        Start Chat
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="openModal('hospitalModal')">
+                    <div class="action-icon">
+                        <span class="material-symbols-outlined">local_hospital</span>
+                    </div>
+                    <h3>Find Hospitals</h3>
+                    <p>Discover nearby hospitals with ratings, reviews, and real-time availability</p>
+                    <div class="action-btn">
+                        Search Now
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="openModal('medicineModal')">
+                    <div class="action-icon">
+                        <span class="material-symbols-outlined">medication</span>
+                    </div>
+                    <h3>Medicine Information</h3>
+                    <p>Get detailed information about medicines in simple, easy-to-understand language</p>
+                    <div class="action-btn">
+                        Search Medicine
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="window.location.href='/dashboard/health-tracker'">">
+                    <div class="action-icon">
+                        <span class="material-symbols-outlined">monitor_heart</span>
+                    </div>
+                    <h3>Health Tracker</h3>
+                    <p>Track your vitals, weight, BP, sleep hours and get AI-powered health insights</p>
+                    <div class="action-btn">
+                        Track Now
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== HOSPITAL MODAL ==================== -->
+    <div class="modal-overlay" id="hospitalModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🏥 Find Nearby Hospitals</h2>
+                <span class="material-symbols-outlined close-icon" onclick="closeModal('hospitalModal')">close</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="hospitalRadius">Search Radius</label>
+                    <select id="hospitalRadius" class="form-control">
+                        <option value="2000">2 km</option>
+                        <option value="5000" selected>5 km</option>
+                        <option value="10000">10 km</option>
+                        <option value="20000">20 km</option>
+                    </select>
+                </div>
+                <button class="modal-btn" onclick="findHospitals()">
+                    <span class="material-symbols-outlined">search</span>
+                    Search Hospitals
+                </button>
+                <div id="hospitalResults" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MEDICINE MODAL ==================== -->
+    <div class="modal-overlay" id="medicineModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>💊 Medicine Information</h2>
+                <span class="material-symbols-outlined close-icon" onclick="closeModal('medicineModal')">close</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="medicineName">Medicine Name</label>
+                    <input type="text" id="medicineName" class="form-control" placeholder="e.g., Paracetamol, Aspirin" />
+                </div>
+                <button class="modal-btn" onclick="searchMedicine()">
+                    <span class="material-symbols-outlined">search</span>
+                    Search Medicine
+                </button>
+                <div id="medicineResults" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APPOINTMENT MODAL ==================== -->
+    <div class="modal-overlay" id="appointmentModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📅 My Appointments</h2>
+                <span class="material-symbols-outlined close-icon" onclick="closeModal('appointmentModal')">close</span>
+            </div>
+            <div class="modal-body">
+                <!-- Book New Appointment Button -->
+                <button onclick="showBookingForm()" class="modal-btn" style="margin-bottom: 1.5rem;">
+                    <span class="material-symbols-outlined">add</span>
+                    Book New Appointment
+                </button>
+
+                <!-- Booking Form (Hidden by default) -->
+                <div id="bookingForm" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: var(--background); border-radius: 12px;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--primary-color);">Book New Appointment</h3>
+                    <form id="appointmentBookingForm">
+                        <div class="form-group">
+                            <label>Doctor Name</label>
+                            <input type="text" id="doctorName" class="form-control" placeholder="Dr. John Smith" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Specialization</label>
+                            <select id="specialization" class="form-control" required>
+                                <option value="">Select specialization</option>
+                                <option value="General Physician">General Physician</option>
+                                <option value="Cardiologist">Cardiologist</option>
+                                <option value="Dermatologist">Dermatologist</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                                <option value="Pediatrician">Pediatrician</option>
+                                <option value="Gynecologist">Gynecologist</option>
+                                <option value="ENT Specialist">ENT Specialist</option>
+                                <option value="Neurologist">Neurologist</option>
+                                <option value="Ophthalmologist">Ophthalmologist</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Appointment Date</label>
+                            <input type="date" id="appointmentDate" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Appointment Time</label>
+                            <input type="time" id="appointmentTime" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Additional Notes (Optional)</label>
+                            <textarea id="appointmentNotes" class="form-control" rows="3" placeholder="Any specific symptoms or concerns..."></textarea>
+                        </div>
+                        <button type="submit" class="modal-btn">
+                            <span class="material-symbols-outlined">check</span>
+                            Book Appointment
+                        </button>
+                        <button type="button" onclick="hideBookingForm()" class="modal-btn" style="background: var(--text-secondary); margin-top: 0.5rem;">
+                            <span class="material-symbols-outlined">close</span>
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Appointments List -->
+                <div id="appointmentsList">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--text-primary);">Upcoming Appointments</h3>
+                    <div id="appointmentsResults">
+                        <div class="loading-text">Loading appointments...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHAT HISTORY MODAL ==================== -->
+    <div class="modal-overlay" id="historyModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>💬 Chat History</h2>
+                <span class="material-symbols-outlined close-icon" onclick="closeModal('historyModal')">close</span>
+            </div>
+            <div class="modal-body">
+                <div id="historyResults">
+                    <div class="loading-text">Loading chat history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHATBOT WIDGET ==================== -->
+    <button class="chatbot-toggler">
+        <span class="material-symbols-outlined">health_and_safety</span>
+        <span class="material-symbols-outlined">close</span>
+    </button>
+    
+    <div class="chatbot">
+        <header>
+            <div class="chatbot-header">
+                <span class="material-symbols-outlined">health_and_safety</span>
+                <h2>MediBot Assistant (Full Access)</h2>
+            </div>
+            <span class="material-symbols-outlined close-btn">close</span>
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <span class="material-symbols-outlined">health_and_safety</span>
+                <p>Hi {{ username }}! I'm your AI health assistant with full access.<br>How can I help you today?</p>
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Describe your symptoms or ask a health question..." spellcheck="false" required></textarea>
+            <span id="send-btn" class="material-symbols-rounded">send</span>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

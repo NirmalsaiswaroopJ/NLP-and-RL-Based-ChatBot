@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Tracker - MediBot</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --background: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.05;
+        }
+
+        .animated-background::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float1 20s infinite ease-in-out;
+            top: 10%;
+            left: 10%;
+        }
+
+        .animated-background::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(118, 75, 162, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float2 25s infinite ease-in-out;
+            bottom: 10%;
+            right: 10%;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(100px, 100px); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-100px, -100px); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .material-symbols-outlined {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.875rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-primary);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Medication List */
+        .medication-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .medication-item {
+            background: var(--background);
+            padding: 1.25rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .medication-item:hover {
+            border-color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .medication-info h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .medication-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .medication-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Health Assessment */
+        .assessment-question {
+            margin-bottom: 2rem;
+        }
+
+        .assessment-question h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--background);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Results */
+        .results-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .results-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .health-score {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .tips-list li .material-symbols-outlined {
+            color: var(--success-color);
+            font-size: 1.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 4rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tab-navigation {
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .medication-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-background"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="material-symbols-outlined">health_and_safety</span>
+            MediBot Health Tracker
+        </div>
+        <div class="navbar-links">
+            <a href="/dashboard" class="nav-btn">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+            <button class="nav-btn primary" onclick="openChatbot()">
+                <span class="material-symbols-outlined">chat</span>
+                Ask AI
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="page-header">
+            <h1>🏥 Your Health Tracker</h1>
+            <p>Manage medications, assess your health, and get personalized insights</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('medications')">
+                <span class="material-symbols-outlined">medication</span>
+                Medication Reminders
+            </button>
+            <button class="tab-btn" onclick="switchTab('assessment')">
+                <span class="material-symbols-outlined">assessment</span>
+                Health Assessment
+            </button>
+            <button class="tab-btn" onclick="switchTab('history')">
+                <span class="material-symbols-outlined">history</span>
+                My History
+            </button>
+        </div>
+
+        <!-- Medications Tab -->
+        <div id="medications" class="tab-content active">
+            <div class="card">
+                <h2>
+                    <span class="material-symbols-outlined">medication</span>
+                    Add Medication Reminder
+                </h2>
+                
+                <form id="medicationForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>
+                                <span class="material-symbols-outlined">pill</span>
+                                Medication Name
+                            </label>
+                            <input type="text" id="med_name" placeholder="e.g., Aspirin" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <span class="material-symbols-outlined">schedule</span>
+                                Time
+                            </label>
+                            <input type="time" id="med_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <span class="material-symbols-outlined">shopping_bag</span>
+                                Dosage
+                            </label>
+                            <input type="text" id="med_dosage" placeholder="e.g., 1 tablet, 500mg" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <span class="material-symbols-outlined">phone</span>
+                                Phone Number (for SMS)
+                            </label>
+                            <input type="tel" id="phone_number" placeholder="+91 1234567890">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span class="material-symbols-outlined">edit_note</span>
+                            Additional Notes
+                        </label>
+                        <textarea id="med_notes" placeholder="Take with food, before meals, etc."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="material-symbols-outlined">add</span>
+                        Add Medication Reminder
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <span class="material-symbols-outlined">list</span>
+                    Your Medications
+                </h2>
+                <div id="medicationsList" class="medication-list">
+                    <div class="empty-state">
+                        <span class="material-symbols-outlined">medication</span>
+                        <p>No medications added yet. Add your first reminder above!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Assessment Tab -->
+        <div id="assessment" class="tab-content">
+            <div class="card">
+                <h2>
+                    <span class="material-symbols-outlined">quiz</span>
+                    Health Assessment
+                </h2>
+                <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+                    Answer these questions to receive personalized health feedback and tips
+                </p>
+
+                <form id="assessmentForm">
+                    <!-- Question 1 -->
+                    <div class="assessment-question">
+                        <h3>1. How would you rate your overall health?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="overall_health" value="excellent" required>
+                                <span>Excellent - I feel great most of the time</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="overall_health" value="good">
+                                <span>Good - Generally healthy with minor issues</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="overall_health" value="fair">
+                                <span>Fair - Some health concerns</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="overall_health" value="poor">
+                                <span>Poor - Dealing with significant health issues</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="assessment-question">
+                        <h3>2. How many hours do you sleep per night on average?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="sleep_hours" value="less_than_5" required>
+                                <span>Less than 5 hours</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sleep_hours" value="5_to_6">
+                                <span>5-6 hours</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sleep_hours" value="7_to_8">
+                                <span>7-8 hours (Recommended)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sleep_hours" value="more_than_8">
+                                <span>More than 8 hours</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="assessment-question">
+                        <h3>3. How often do you exercise?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="exercise_frequency" value="daily" required>
+                                <span>Daily or almost daily</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="exercise_frequency" value="3_to_5">
+                                <span>3-5 times per week</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="exercise_frequency" value="1_to_2">
+                                <span>1-2 times per week</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="exercise_frequency" value="rarely">
+                                <span>Rarely or never</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="assessment-question">
+                        <h3>4. How would you describe your stress level?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="stress_level" value="low" required>
+                                <span>Low - I feel relaxed most of the time</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="stress_level" value="moderate">
+                                <span>Moderate - Manageable stress</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="stress_level" value="high">
+                                <span>High - Often feeling overwhelmed</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="stress_level" value="very_high">
+                                <span>Very High - Constantly stressed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="assessment-question">
+                        <h3>5. How would you rate your diet?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="diet_quality" value="excellent" required>
+                                <span>Excellent - Balanced, nutritious meals</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="diet_quality" value="good">
+                                <span>Good - Mostly healthy choices</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="diet_quality" value="fair">
+                                <span>Fair - Mix of healthy and unhealthy</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="diet_quality" value="poor">
+                                <span>Poor - Mostly processed or fast food</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="assessment-question">
+                        <h3>6. How much water do you drink daily?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="water_intake" value="less_than_2" required>
+                                <span>Less than 2 glasses</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="water_intake" value="2_to_5">
+                                <span>2-5 glasses</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="water_intake" value="6_to_8">
+                                <span>6-8 glasses (Recommended)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="water_intake" value="more_than_8">
+                                <span>More than 8 glasses</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="material-symbols-outlined">psychology</span>
+                        Get Health Feedback
+                    </button>
+                </form>
+
+                <div id="assessmentResults" style="display: none; margin-top: 2rem;"></div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content">
+            <div class="card">
+                <h2>
+                    <span class="material-symbols-outlined">history</span>
+                    Assessment History
+                </h2>
+                <div id="historyList">
+                    <div class="empty-state">
+                        <span class="material-symbols-outlined">assignment</span>
+                        <p>No assessment history yet. Complete your first assessment to see results here!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/js/health_tracker.js"></script>
+</body>
+</html>
